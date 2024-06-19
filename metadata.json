@@ -2,7 +2,6 @@
   "name": "HeadsetControl Simple",
   "description": "Simple extension for headset control",
   "uuid": "headsetcontrol-simple@finelli.dev",
-  "shell-version": [
-    "46"
-  ]
+  "shell-version": ["46"],
+  "gettext-domain": "headsetcontrol-simple@finelli.dev"
 }
