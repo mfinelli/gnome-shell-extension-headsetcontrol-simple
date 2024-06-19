@@ -29,30 +29,30 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
 const Indicator = GObject.registerClass(
 class Indicator extends PanelMenu.Button {
-    _init() {
-        super._init(0.0, _('My Shiny Indicator'));
+  _init() {
+    super._init(0.0, _('Headset Control'));
 
-        this.add_child(new St.Icon({
-            icon_name: 'face-smile-symbolic',
-            style_class: 'system-status-icon',
-        }));
+    this.add_child(new St.Icon({
+      icon_name: 'audio-headset-symbolic',
+      style_class: 'system-status-icon',
+    }));
 
-        let item = new PopupMenu.PopupMenuItem(_('Show Notification'));
-        item.connect('activate', () => {
-            Main.notify(_('Whatʼs up, folks?'));
-        });
-        this.menu.addMenuItem(item);
-    }
+    let item = new PopupMenu.PopupMenuItem(_('Show Notification'));
+    item.connect('activate', () => {
+      Main.notify(_('Whatʼs up, folks?'));
+    });
+    this.menu.addMenuItem(item);
+  }
 });
 
 export default class IndicatorExampleExtension extends Extension {
-    enable() {
-        this._indicator = new Indicator();
-        Main.panel.addToStatusArea(this.uuid, this._indicator);
-    }
+  enable() {
+    this._indicator = new Indicator();
+    Main.panel.addToStatusArea(this.uuid, this._indicator);
+  }
 
-    disable() {
-        this._indicator.destroy();
-        this._indicator = null;
-    }
+  disable() {
+    this._indicator.destroy();
+    this._indicator = null;
+  }
 }
