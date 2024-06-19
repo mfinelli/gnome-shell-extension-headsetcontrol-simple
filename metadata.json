@@ -3,5 +3,6 @@
   "description": "Simple extension for headset control",
   "uuid": "headsetcontrol-simple@finelli.dev",
   "shell-version": ["46"],
-  "gettext-domain": "headsetcontrol-simple@finelli.dev"
+  "gettext-domain": "headsetcontrol-simple@finelli.dev",
+  "settings-schema": "org.gnome.shell.extensions.headsetcontrol-simple"
 }
