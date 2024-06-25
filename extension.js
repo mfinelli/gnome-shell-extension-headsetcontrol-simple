@@ -21,6 +21,7 @@
 import Clutter from 'gi://Clutter';
 import GObject from 'gi://GObject';
 import St from 'gi://St';
+import GLib from 'gi://GLib';
 
 import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
@@ -38,14 +39,15 @@ class Indicator extends PanelMenu.Button {
       icon_name: 'audio-headset-symbolic',
       style_class: 'system-status-icon',
     });
-    let label = new St.Label({ text: '10%',
+    // let label = new St.Label({ text: _('%d%').format(10),
+    this.label = new St.Label({ text: '',
             x_expand: true,
             x_align: Clutter.ActorAlign.END,
             y_expand: true,
             y_align: Clutter.ActorAlign.CENTER });
 
         box.add_child(icon);
-        box.add_child(label);
+        box.add_child(this.label);
         this.add_child(box);
 
     // this.label.set_text('test');
@@ -55,6 +57,12 @@ class Indicator extends PanelMenu.Button {
       Main.notify(_('Whatʼs up, folks?'));
     });
     this.menu.addMenuItem(item);
+
+    this.timer = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 5, () => {
+         // updateLabel(newText);
+      this.label.set_text(_('%d%').format(Math.floor(Math.random() * 100)))
+         return GLib.SOURCE_CONTINUE;
+    });
   }
 });
 
@@ -67,5 +75,8 @@ export default class IndicatorExampleExtension extends Extension {
   disable() {
     this._indicator.destroy();
     this._indicator = null;
+
+    GLib.Source.remove(this.timer);
+    this.timer = null;
   }
 }
