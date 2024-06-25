@@ -18,6 +18,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+import Clutter from 'gi://Clutter';
 import GObject from 'gi://GObject';
 import St from 'gi://St';
 
@@ -32,10 +33,22 @@ class Indicator extends PanelMenu.Button {
   _init() {
     super._init(0.0, _('Headset Control'));
 
-    this.add_child(new St.Icon({
+    let box = new St.BoxLayout({ vertical: false, style_class: 'panel-status-menu-box' });
+    let icon = new St.Icon({
       icon_name: 'audio-headset-symbolic',
       style_class: 'system-status-icon',
-    }));
+    });
+    let label = new St.Label({ text: '10%',
+            x_expand: true,
+            x_align: Clutter.ActorAlign.END,
+            y_expand: true,
+            y_align: Clutter.ActorAlign.CENTER });
+
+        box.add_child(icon);
+        box.add_child(label);
+        this.add_child(box);
+
+    // this.label.set_text('test');
 
     let item = new PopupMenu.PopupMenuItem(_('Show Notification'));
     item.connect('activate', () => {
