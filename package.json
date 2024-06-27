@@ -1,6 +1,7 @@
 {
   "name": "gnome-shell-extension-headsetcontrol-simple",
   "version": "1.0.0",
+  "private": true,
   "description": "Simple GNOME shell extension for headset control.",
   "main": "extension.js",
   "scripts": {
@@ -19,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/mfinelli/gnome-shell-extension-headsetcontrol-simple/issues"
   },
-  "homepage": "https://github.com/mfinelli/gnome-shell-extension-headsetcontrol-simple#readme"
+  "homepage": "https://github.com/mfinelli/gnome-shell-extension-headsetcontrol-simple#readme",
+  "devDependencies": {
+    "prettier": "^3.3.2"
+  }
 }
