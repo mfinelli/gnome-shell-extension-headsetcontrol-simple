@@ -1,8 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <schemalist>
-  <schema id="org.gnome.shell.extensions.headsetcontrol-simple" path="/org/gnome/shell/extensions/headsetcontrol-simple/">
+  <schema
+    id="org.gnome.shell.extensions.headsetcontrol-simple"
+    path="/org/gnome/shell/extensions/headsetcontrol-simple/"
+  >
     <key name="notify-low-battery" type="b">
       <default>true</default>
+      <summary>Send a notification when the battery level gets low</summary>
+    </key>
+    <key name="polling-interval" type="i">
+      <default>10</default>
+      <summary
+      >How often to ask headset control for the battery status (in seconds)</summary>
     </key>
   </schema>
 </schemalist>

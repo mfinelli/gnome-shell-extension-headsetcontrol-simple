@@ -5,8 +5,12 @@
   "description": "Simple GNOME shell extension for headset control.",
   "main": "extension.js",
   "scripts": {
-    "fix": "prettier --write .",
-    "lint": "prettier --check .",
+    "fix": "npm run fix:js && npm run fix:xml",
+    "fix:js": "prettier --write .",
+    "fix:xml": "prettier --plugin=@prettier/plugin-xml --write '**/*.xml'",
+    "lint": "npm run lint:js && npm run lint:xml",
+    "lint:js": "prettier --check .",
+    "lint:xml": "prettier --plugin=@prettier/plugin-xml --check '**/*.xml'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,6 +28,7 @@
   },
   "homepage": "https://github.com/mfinelli/gnome-shell-extension-headsetcontrol-simple#readme",
   "devDependencies": {
+    "@prettier/plugin-xml": "^3.4.1",
     "prettier": "^3.3.2"
   }
 }
