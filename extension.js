@@ -58,11 +58,15 @@ class Indicator extends PanelMenu.Button {
     });
     this.menu.addMenuItem(item);
 
+    let that = this;
     this.timer = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 5, () => {
-         // updateLabel(newText);
-      this.label.set_text(_('%d%').format(Math.floor(Math.random() * 100)))
+      that._getStatus();
          return GLib.SOURCE_CONTINUE;
     });
+  }
+
+  _getStatus() {
+    this.label.set_text(_('%d%').format(Math.floor(Math.random() * 100)))
   }
 });
 
