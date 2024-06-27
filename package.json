@@ -5,6 +5,8 @@
   "description": "Simple GNOME shell extension for headset control.",
   "main": "extension.js",
   "scripts": {
+    "fix": "prettier --write .",
+    "lint": "prettier --check .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
