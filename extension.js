@@ -38,6 +38,10 @@ const Indicator = GObject.registerClass(
     _init() {
       super._init(0.0, _("Headset Control"));
 
+      this._cmd = ["/usr/bin/headsetcontrol", "-b", "-o", "json"];
+      this._flags =
+        Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE;
+
       let box = new St.BoxLayout({
         vertical: false,
         style_class: "panel-status-menu-box",
@@ -76,31 +80,44 @@ const Indicator = GObject.registerClass(
     // https://gjs.guide/guides/gio/subprocesses.html#complete-examples
     async _getStatus() {
       try {
-        // TODO: put this somewhere where we don't re-eval it every time...
-        const cmd = "/usr/bin/headsetcontrol -b -o json";
-
-        const [result, argv] = GLib.shell_parse_argv(cmd);
-        if (!result) {
-          throw "Command parse error!";
-        }
-
-        const proc = Gio.Subprocess.new(
-          argv,
-          Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE,
-        );
-
+        const proc = Gio.Subprocess.new(this._cmd, this._flags);
         const [stdout, stderr] = await proc.communicate_utf8_async(null, null);
 
         if (proc.get_successful()) {
           const output = JSON.parse(stdout);
           const numDevices = output.device_count;
+
+          if (numDevices === 0) {
+            // TODO: remove icon from topbar
+          } else {
+            // TODO: detect if we've removed the topbar icon and then add
+            // it back
+          }
+
           let pcts = 0;
           let atLeastOne = false;
 
+          this.menu.removeAll();
           output.devices.forEach((device) => {
-            if (device.battery.level !== -1) {
-              atLeastOne = true;
-              pcts += device.battery.level;
+            if (device.battery) {
+              if (device.battery.level !== -1) {
+                atLeastOne = true;
+                pcts += device.battery.level;
+                const item = new PopupMenu.PopupMenuItem(
+                  _("%s %s: %d%").format(
+                    device.vendor,
+                    device.product,
+                    device.battery.level,
+                  ),
+                );
+                item.setOrnament(PopupMenu.Ornament.DOT);
+                this.menu.addMenuItem(item);
+              } else {
+                const item = new PopupMenu.PopupMenuItem(
+                  _("%s %s: N/A").format(device.vendor, device.product),
+                );
+                this.menu.addMenuItem(item);
+              }
             }
           });
 
@@ -114,7 +131,7 @@ const Indicator = GObject.registerClass(
           throw new Error(stderr);
         }
       } catch (err) {
-        // TODO: do something
+        console.warn(err);
       }
     }
   },
