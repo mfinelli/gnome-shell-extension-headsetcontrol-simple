@@ -19,9 +19,10 @@
  */
 
 import Clutter from "gi://Clutter";
-import GObject from "gi://GObject";
-import St from "gi://St";
 import GLib from "gi://GLib";
+import GObject from "gi://GObject";
+import Gio from "gi://Gio";
+import St from "gi://St";
 
 import {
   Extension,
@@ -41,11 +42,12 @@ const Indicator = GObject.registerClass(
         vertical: false,
         style_class: "panel-status-menu-box",
       });
+
       let icon = new St.Icon({
         icon_name: "audio-headset-symbolic",
         style_class: "system-status-icon",
       });
-      // let label = new St.Label({ text: _('%d%').format(10),
+
       this.label = new St.Label({
         text: "",
         x_expand: true,
@@ -57,8 +59,6 @@ const Indicator = GObject.registerClass(
       box.add_child(icon);
       box.add_child(this.label);
       this.add_child(box);
-
-      // this.label.set_text('test');
 
       let item = new PopupMenu.PopupMenuItem(_("Show Notification"));
       item.connect("activate", () => {
@@ -73,8 +73,49 @@ const Indicator = GObject.registerClass(
       });
     }
 
-    _getStatus() {
-      this.label.set_text(_("%d%").format(Math.floor(Math.random() * 100)));
+    // https://gjs.guide/guides/gio/subprocesses.html#complete-examples
+    async _getStatus() {
+      try {
+        // TODO: put this somewhere where we don't re-eval it every time...
+        const cmd = "/usr/bin/headsetcontrol -b -o json";
+
+        const [result, argv] = GLib.shell_parse_argv(cmd);
+        if (!result) {
+          throw "Command parse error!";
+        }
+
+        const proc = Gio.Subprocess.new(
+          argv,
+          Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE,
+        );
+
+        const [stdout, stderr] = await proc.communicate_utf8_async(null, null);
+
+        if (proc.get_successful()) {
+          const output = JSON.parse(stdout);
+          const numDevices = output.device_count;
+          let pcts = 0;
+          let atLeastOne = false;
+
+          output.devices.forEach((device) => {
+            if (device.battery.level !== -1) {
+              atLeastOne = true;
+              pcts += device.battery.level;
+            }
+          });
+
+          const pct = Math.floor(pcts / numDevices);
+          if (atLeastOne) {
+            this.label.set_text(_("%d%").format(pct));
+          } else {
+            this.label.set_text("");
+          }
+        } else {
+          throw new Error(stderr);
+        }
+      } catch (err) {
+        // TODO: do something
+      }
     }
   },
 );
