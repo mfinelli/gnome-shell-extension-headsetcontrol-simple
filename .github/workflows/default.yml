@@ -9,8 +9,12 @@ on:
 
 jobs:
   main:
-    runs-on: ubuntu-latest
+    # TODO: ubuntu 24.04 because we target GNOME >= 46, once 24.04 becomes
+    # "latest" then we can switch back to ubuntu-latest
+    runs-on: ubuntu-24.04
+
     steps:
+      - run: sudo apt-get install -y gnome-shell
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
